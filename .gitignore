@@ -32,6 +32,12 @@ build/
 ### VS Code ###
 .vscode/
 
-**/application.yaml
+### Application Config ###
+src/main/resources/application.yml
+src/main/resources/application.yaml
 
-**/application.yaml
+### Test Data ###
+tokens.csv
+test-users.csv
+*.jtl
+report/

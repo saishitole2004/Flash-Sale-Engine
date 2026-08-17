@@ -19,9 +19,13 @@ public class Product {
     private String name;
 
     @Column(columnDefinition = "TEXT")
-    private String description; // <-- ADD THIS FIELD
+    private String description;
 
     private Double price;
 
     private Integer stock;
+
+    // Prevents concurrent DB write collisions during inventory updates
+    @Version
+    private Integer version;
 }

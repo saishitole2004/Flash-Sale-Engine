@@ -1,6 +1,6 @@
 package com.flashsale.flash_sale_engine.service;
 
-import com.flashsale.flash_sale_engine.dto.OrderRequestDTO;
+import com.flashsale.flash_sale_engine.dto.OrderEvent;
 import com.flashsale.flash_sale_engine.entity.Order;
 import com.flashsale.flash_sale_engine.entity.Product;
 import com.flashsale.flash_sale_engine.entity.User;
@@ -26,7 +26,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order placeOrder(OrderRequestDTO req) {
+    public Order placeOrder(OrderEvent req) {
         // 1. Validate user
         User user = userRepo.findById(req.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + req.getUserId()));
@@ -49,6 +49,7 @@ public class OrderService {
                 .product(product)
                 .quantity(req.getQuantity())
                 .totalPrice(req.getQuantity() * product.getPrice())
+                .status("SUCCESS")
                 .build();
 
         return orderRepo.save(order);

@@ -2,6 +2,7 @@ package com.flashsale.flash_sale_engine.controller;
 
 import com.flashsale.flash_sale_engine.entity.User;
 import com.flashsale.flash_sale_engine.security.UserDetailServiceImplementation;
+import com.flashsale.flash_sale_engine.service.RedisStockService;
 import com.flashsale.flash_sale_engine.service.UserService;
 import com.flashsale.flash_sale_engine.util.JwtUtil;
 import io.jsonwebtoken.Jwts;
@@ -13,16 +14,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/public")
 public class PublicController {
 
     private final UserService userService;
+
+    private final RedisStockService redisStockService;
+
 
     private final AuthenticationManager authenticationManager;
 
@@ -31,8 +32,9 @@ public class PublicController {
     private final JwtUtil jwtUtil;
 
 
-    public PublicController(UserService userService, AuthenticationManager authenticationManager, UserDetailServiceImplementation userDetailServiceImplementation, JwtUtil jwtUtil) {
+    public PublicController(UserService userService, RedisStockService redisStockService, AuthenticationManager authenticationManager, UserDetailServiceImplementation userDetailServiceImplementation, JwtUtil jwtUtil) {
         this.userService = userService;
+        this.redisStockService = redisStockService;
         this.authenticationManager = authenticationManager;
         this.userDetailServiceImplementation = userDetailServiceImplementation;
         this.jwtUtil = jwtUtil;
@@ -56,5 +58,10 @@ public class PublicController {
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
         }
+    }
+    @PostMapping("/preheat/{productId}")
+    public ResponseEntity<String> preheatStock(@PathVariable Long productId) {
+        redisStockService.preheatStock(productId);
+        return ResponseEntity.ok(" Successfully pre-heated stock for Product ID " + productId + " into Redis!");
     }
 }
